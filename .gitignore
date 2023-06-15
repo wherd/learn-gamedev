@@ -1,0 +1,4 @@
+# Ignore builds
+builds-debug
+temp
+res

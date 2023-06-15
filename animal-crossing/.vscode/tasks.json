@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "build-linux-debug",
+			"command": "misc/build-linux.sh",
+			"args": ["-d"],
+			"options": {"cwd": "${workspaceFolder}"},
+			"problemMatcher": ["$gcc"],
+			"group": "build"
+		},
+		{
+			"type": "cppbuild",
+			"label": "build-linux-release",
+			"command": "misc/build-linux.sh",
+			"args": ["-cus"],
+			"options": {"cwd": "${workspaceFolder}"},
+			"problemMatcher": ["$gcc"],
+			"group": "build"
+		}
+	]
+}
