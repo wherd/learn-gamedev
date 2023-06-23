@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/vendor/raylib/src"
+                "${workspaceFolder}/../vendor/raylib/src"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

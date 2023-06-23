@@ -1,4 +1,3 @@
 # Ignore builds
-builds-debug
-temp
+builds
 res

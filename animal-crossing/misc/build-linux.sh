@@ -24,14 +24,15 @@ set -e
 while getopts ":hdusrcq" opt; do
     case $opt in
         h)
-            echo "Usage: ./linux-build.sh [-hdusrcqq]"
+            echo "Usage: ./build-linux.sh [-hdusrcqq]"
             echo " -h  Show this information"
             echo " -d  Faster builds that have debug symbols, and enable warnings"
             echo " -u  Run upx* on the executable after compilation (before -r)"
             echo " -s  Run strip on the executable after compilation (before -r)"
             echo " -r  Run the executable after compilation"
             echo " -c  Remove the temp/(debug|release) directory, ie. full recompile"
-            echo " -q  Suppress this script's informational prints"
+            echo " -q  Suppress this script's informational pr
+            ints"
             echo " -qq Suppress all prints, complete silence (> /dev/null 2>&1)"
             echo ""
             echo "* This is mostly here to make building simple \"shipping\" versions"
@@ -39,10 +40,10 @@ while getopts ":hdusrcq" opt; do
             echo "  requires that you have upx installed and on your path, of course."
             echo ""
             echo "Examples:"
-            echo " Build a release build:                    ./linux-build.sh"
-            echo " Build a release build, full recompile:    ./linux-build.sh -c"
-            echo " Build a debug build and run:              ./linux-build.sh -d -r"
-            echo " Build in debug, run, don't print at all:  ./linux-build.sh -drqq"
+            echo " Build a release build:                    ./build-linux.sh"
+            echo " Build a release build, full recompile:    ./build-linux.sh -c"
+            echo " Build a debug build and run:              ./build-linux.sh -d -r"
+            echo " Build in debug, run, don't print at all:  ./build-linux.sh -drqq"
             exit 0
             ;;
         d)
@@ -92,7 +93,6 @@ WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -lm -ldl -lpthread -lX11 -lxcb -lGL -lGLX -lXext -lGLdispatch -lXau -lXdmcp"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
-    OUTPUT_DIR="builds-debug/linux"
     COMPILATION_FLAGS="-std=c99 -O0 -g"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-lm -ldl -lpthread -lX11 -lxcb -lGL -lGLX -lXext -lGLdispatch -lXau -lXdmcp"
@@ -106,10 +106,7 @@ else
 fi
 
 # Create the raylib cache directory
-TEMP_DIR="temp/release"
-if [ -n "$BUILD_DEBUG" ]; then
-    TEMP_DIR="temp/debug"
-fi
+TEMP_DIR="builds/temp"
 # If there's a -c flag, remove the cache
 if [ -d "$TEMP_DIR" ] && [ -n "$BUILD_ALL" ]; then
     [ -z "$QUIET" ] && echo "COMPILE-INFO: Found cached raylib, rebuilding."
@@ -120,7 +117,7 @@ if [ ! -d "$TEMP_DIR" ]; then
     mkdir -p $TEMP_DIR
     cd $TEMP_DIR
     RAYLIB_DEFINES="-D_DEFAULT_SOURCE -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33"
-    RAYLIB_C_FILES="$RAYLIB_SRC/core.c $RAYLIB_SRC/shapes.c $RAYLIB_SRC/textures.c $RAYLIB_SRC/text.c $RAYLIB_SRC/models.c $RAYLIB_SRC/utils.c $RAYLIB_SRC/raudio.c $RAYLIB_SRC/rglfw.c"
+    RAYLIB_C_FILES="$RAYLIB_SRC/rcore.c $RAYLIB_SRC/rshapes.c $RAYLIB_SRC/rtextures.c $RAYLIB_SRC/rtext.c $RAYLIB_SRC/rmodels.c $RAYLIB_SRC/utils.c $RAYLIB_SRC/raudio.c $RAYLIB_SRC/rglfw.c"
     RAYLIB_INCLUDE_FLAGS="-I$RAYLIB_SRC -I$RAYLIB_SRC/external/glfw/include"
 
     if [ -n "$REALLY_QUIET" ]; then
@@ -128,7 +125,7 @@ if [ ! -d "$TEMP_DIR" ]; then
     else
         $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS $RAYLIB_C_FILES
     fi
-    [ -z "$QUIET" ] && echo "COMPILE-INFO: Raylib compiled into object files in: $TEMP_DIR/"
+    [ -z "$QUIET" ] && echo "COMPILE-INFO: raylib compiled into object files in: $TEMP_DIR/"
     cd $ROOT_DIR
 fi
 
